@@ -11,6 +11,11 @@ Production-grade enterprise AI research platform for document ingestion, semanti
 - `infrastructure/` — Docker, Kubernetes, Terraform, Helm
 - `scripts/` — Automation scripts
 
+## Shared Configuration
+
+- Go shared platform utilities: `backend/internal/platform`
+- Python shared settings/logging: `ai-services/shared`
+
 ## Getting Started (High Level)
 
 1. Review architecture docs in `docs/`

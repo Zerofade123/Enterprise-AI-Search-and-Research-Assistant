@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "enterprise-ai-services"
+version = "0.1.0"
+description = "AI services for enterprise research platform"
+authors = ["Zerofade <Zerofadecloud.com@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "ai_services" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2.6.0"
+pydantic-settings = "^2.2.1"
+python-dotenv = "^1.0.1"
+structlog = "^24.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.0"
+pytest-asyncio = "^0.23.5"
+
+[build-system]
+requires = ["poetry-core>=1.8.0"]
+build-backend = "poetry.core.masonry.api"
