@@ -2,6 +2,7 @@ package ports
 
 import (
 	"context"
+
 	"github.com/Zerofade123/Enterprise-AI-Search-and-Research-Assistant/backend/internal/auth/domain"
 	"github.com/google/uuid"
 )
@@ -16,8 +17,10 @@ type UserRepository interface {
 type SessionRepository interface {
 	Create(ctx context.Context, session *domain.Session) error
 	GetByRefreshHash(ctx context.Context, hash string) (*domain.Session, error)
+	GetByID(ctx context.Context, id uuid.UUID) (*domain.Session, error)
 	Revoke(ctx context.Context, sessionID uuid.UUID) error
 	RevokeAllForUser(ctx context.Context, userID uuid.UUID) error
+	MarkRotated(ctx context.Context, sessionID uuid.UUID) error
 }
 
 type APIKeyRepository interface {

@@ -21,9 +21,9 @@ func NewSessionRepository(pool *pgxpool.Pool) *SessionRepository {
 
 func (r *SessionRepository) Create(ctx context.Context, session *domain.Session) error {
 	_, err := r.pool.Exec(ctx, `
-		INSERT INTO auth_sessions (id, user_id, refresh_token_hash, ip_address, user_agent, expires_at, created_at)
-		VALUES ($1,$2,$3,$4,$5,$6,$7)
-	`, session.ID, session.UserID, session.RefreshTokenHash, session.IPAddress, session.UserAgent, session.ExpiresAt, session.CreatedAt)
+		INSERT INTO auth_sessions (id, user_id, refresh_token_hash, refresh_family_id, ip_address, user_agent, expires_at, created_at)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+	`, session.ID, session.UserID, session.RefreshTokenHash, session.RefreshFamilyID, session.IPAddress, session.UserAgent, session.ExpiresAt, session.CreatedAt)
 	if err != nil {
 		return platformErrors.Wrap("sessionRepo.Create", platformErrors.CodeInternal, "failed to create session", err)
 	}
@@ -32,13 +32,13 @@ func (r *SessionRepository) Create(ctx context.Context, session *domain.Session)
 
 func (r *SessionRepository) GetByRefreshHash(ctx context.Context, hash string) (*domain.Session, error) {
 	row := r.pool.QueryRow(ctx, `
-		SELECT id, user_id, refresh_token_hash, ip_address, user_agent, expires_at, created_at, revoked_at
+		SELECT id, user_id, refresh_token_hash, refresh_family_id, ip_address, user_agent, expires_at, created_at, revoked_at, rotated_at
 		FROM auth_sessions WHERE refresh_token_hash = $1
 	`, hash)
 
 	var session domain.Session
-	var revokedAt sql.NullTime
-	if err := row.Scan(&session.ID, &session.UserID, &session.RefreshTokenHash, &session.IPAddress, &session.UserAgent, &session.ExpiresAt, &session.CreatedAt, &revokedAt); err != nil {
+	var revokedAt, rotatedAt sql.NullTime
+	if err := row.Scan(&session.ID, &session.UserID, &session.RefreshTokenHash, &session.RefreshFamilyID, &session.IPAddress, &session.UserAgent, &session.ExpiresAt, &session.CreatedAt, &revokedAt, &rotatedAt); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -46,6 +46,32 @@ func (r *SessionRepository) GetByRefreshHash(ctx context.Context, hash string) (
 	}
 	if revokedAt.Valid {
 		session.RevokedAt = &revokedAt.Time
+	}
+	if rotatedAt.Valid {
+		session.RotatedAt = &rotatedAt.Time
+	}
+	return &session, nil
+}
+
+func (r *SessionRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Session, error) {
+	row := r.pool.QueryRow(ctx, `
+		SELECT id, user_id, refresh_token_hash, refresh_family_id, ip_address, user_agent, expires_at, created_at, revoked_at, rotated_at
+		FROM auth_sessions WHERE id = $1
+	`, id)
+
+	var session domain.Session
+	var revokedAt, rotatedAt sql.NullTime
+	if err := row.Scan(&session.ID, &session.UserID, &session.RefreshTokenHash, &session.RefreshFamilyID, &session.IPAddress, &session.UserAgent, &session.ExpiresAt, &session.CreatedAt, &revokedAt, &rotatedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, platformErrors.Wrap("sessionRepo.GetByID", platformErrors.CodeInternal, "failed to get session", err)
+	}
+	if revokedAt.Valid {
+		session.RevokedAt = &revokedAt.Time
+	}
+	if rotatedAt.Valid {
+		session.RotatedAt = &rotatedAt.Time
 	}
 	return &session, nil
 }
@@ -66,6 +92,16 @@ func (r *SessionRepository) RevokeAllForUser(ctx context.Context, userID uuid.UU
 	`, time.Now().UTC(), userID)
 	if err != nil {
 		return platformErrors.Wrap("sessionRepo.RevokeAll", platformErrors.CodeInternal, "failed to revoke sessions", err)
+	}
+	return nil
+}
+
+func (r *SessionRepository) MarkRotated(ctx context.Context, sessionID uuid.UUID) error {
+	_, err := r.pool.Exec(ctx, `
+		UPDATE auth_sessions SET rotated_at = $1 WHERE id = $2
+	`, time.Now().UTC(), sessionID)
+	if err != nil {
+		return platformErrors.Wrap("sessionRepo.MarkRotated", platformErrors.CodeInternal, "failed to mark rotated", err)
 	}
 	return nil
 }

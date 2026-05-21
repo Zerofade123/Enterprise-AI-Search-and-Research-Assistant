@@ -3,15 +3,15 @@ package config
 import "time"
 
 type AppConfig struct {
-	Env         string        `mapstructure:"ENV" validate:"required,oneof=development staging production"`
-	LogLevel    string        `mapstructure:"LOG_LEVEL" validate:"required,oneof=debug info warn error"`
-	ServiceName string        `mapstructure:"SERVICE_NAME" validate:"required"`
-	HTTP        HTTPConfig    `mapstructure:"HTTP" validate:"required"`
+	Env         string         `mapstructure:"ENV" validate:"required,oneof=development staging production"`
+	LogLevel    string         `mapstructure:"LOG_LEVEL" validate:"required,oneof=debug info warn error"`
+	ServiceName string         `mapstructure:"SERVICE_NAME" validate:"required"`
+	HTTP        HTTPConfig     `mapstructure:"HTTP" validate:"required"`
 	Postgres    PostgresConfig `mapstructure:"POSTGRES" validate:"required"`
-	Redis       RedisConfig   `mapstructure:"REDIS" validate:"required"`
-	S3          S3Config      `mapstructure:"S3" validate:"required"`
-	Milvus      MilvusConfig  `mapstructure:"MILVUS" validate:"required"`
-	JWT         JWTConfig     `mapstructure:"JWT" validate:"required"`
+	Redis       RedisConfig    `mapstructure:"REDIS" validate:"required"`
+	S3          S3Config       `mapstructure:"S3" validate:"required"`
+	Milvus      MilvusConfig   `mapstructure:"MILVUS" validate:"required"`
+	JWT         JWTConfig      `mapstructure:"JWT" validate:"required"`
 }
 
 type HTTPConfig struct {

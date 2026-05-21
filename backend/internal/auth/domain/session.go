@@ -1,4 +1,4 @@
-package domain
+package auth
 
 import (
 	"time"
@@ -7,12 +7,14 @@ import (
 )
 
 type Session struct {
-	ID             uuid.UUID
-	UserID         uuid.UUID
-	RefreshTokenHash string
-	IPAddress      string
-	UserAgent      string
-	ExpiresAt      time.Time
-	CreatedAt      time.Time
-	RevokedAt      *time.Time
+	ID               uuid.UUID
+	UserID           uuid.UUID
+	RefreshTokenHash  string
+	RefreshFamilyID   string
+	IPAddress        string
+	UserAgent        string
+	ExpiresAt        time.Time
+	CreatedAt        time.Time
+	RevokedAt        *time.Time
+	RotatedAt        *time.Time
 }
