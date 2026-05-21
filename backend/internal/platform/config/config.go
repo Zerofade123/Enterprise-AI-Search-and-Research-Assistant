@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Zerofade123/Enterprise-AI-Search-and-Research-Assistant/backend/internal/platform/validation"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
-	"github.com/Zerofade123/Enterprise-AI-Search-and-Research-Assistant/backend/internal/platform/validation"
 )
 
 func Load(serviceName string) (*AppConfig, error) {
@@ -26,6 +26,13 @@ func Load(serviceName string) (*AppConfig, error) {
 
 	if err := validation.ValidateStruct(cfg); err != nil {
 		return nil, err
+	}
+
+	if cfg.JWT.AccessTokenTTL <= 0 || cfg.JWT.RefreshTokenTTL <= 0 || cfg.JWT.MfaTokenTTL <= 0 {
+		return nil, fmt.Errorf("invalid jwt ttl configuration")
+	}
+	if cfg.Postgres.MaxIdleConns > cfg.Postgres.MaxOpenConns {
+		return nil, fmt.Errorf("postgres max idle conns cannot exceed max open conns")
 	}
 
 	return cfg, nil
@@ -70,6 +77,7 @@ func applyDefaults(v *viper.Viper, serviceName string) {
 
 	v.SetDefault("JWT.SIGNING_KEY", "")
 	v.SetDefault("JWT.ISSUER", "enterprise-ai-auth")
+	v.SetDefault("JWT.KEY_ID", "default")
 	v.SetDefault("JWT.ACCESS_TOKEN_TTL", 1*time.Hour)
 	v.SetDefault("JWT.REFRESH_TOKEN_TTL", 7*24*time.Hour)
 	v.SetDefault("JWT.MFA_TOKEN_TTL", 5*time.Minute)

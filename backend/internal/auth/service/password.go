@@ -2,17 +2,22 @@ package service
 
 import (
 	"regexp"
+	"strings"
 
 	platformErrors "github.com/Zerofade123/Enterprise-AI-Search-and-Research-Assistant/backend/internal/platform/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var (
-	upperRe = regexp.MustCompile(`[A-Z]`)
-	lowerRe = regexp.MustCompile(`[a-z]`)
-	digitRe = regexp.MustCompile(`[0-9]`)
+	upperRe   = regexp.MustCompile(`[A-Z]`)
+	lowerRe   = regexp.MustCompile(`[a-z]`)
+	digitRe   = regexp.MustCompile(`[0-9]`)
 	specialRe = regexp.MustCompile(`[^A-Za-z0-9]`)
 )
+
+func NormalizeEmail(email string) string {
+	return strings.ToLower(strings.TrimSpace(email))
+}
 
 func ValidatePasswordStrength(password string) error {
 	if len(password) < 12 {

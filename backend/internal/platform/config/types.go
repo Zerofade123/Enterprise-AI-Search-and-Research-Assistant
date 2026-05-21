@@ -23,16 +23,16 @@ type HTTPConfig struct {
 }
 
 type PostgresConfig struct {
-	Host               string        `mapstructure:"HOST" validate:"required"`
-	Port               int           `mapstructure:"PORT" validate:"required,min=1,max=65535"`
-	User               string        `mapstructure:"USER" validate:"required"`
-	Password           string        `mapstructure:"PASSWORD" validate:"required"`
-	DBName             string        `mapstructure:"DB" validate:"required"`
-	SSLMode            string        `mapstructure:"SSL_MODE" validate:"required,oneof=disable require verify-ca verify-full"`
-	MaxOpenConns       int           `mapstructure:"MAX_OPEN_CONNS" validate:"required,min=1"`
-	MaxIdleConns       int           `mapstructure:"MAX_IDLE_CONNS" validate:"required,min=1"`
-	ConnMaxLifetime    time.Duration `mapstructure:"CONN_MAX_LIFETIME" validate:"required"`
-	ConnMaxIdleTime    time.Duration `mapstructure:"CONN_MAX_IDLE_TIME" validate:"required"`
+	Host            string        `mapstructure:"HOST" validate:"required"`
+	Port            int           `mapstructure:"PORT" validate:"required,min=1,max=65535"`
+	User            string        `mapstructure:"USER" validate:"required"`
+	Password        string        `mapstructure:"PASSWORD" validate:"required"`
+	DBName          string        `mapstructure:"DB" validate:"required"`
+	SSLMode         string        `mapstructure:"SSL_MODE" validate:"required,oneof=disable require verify-ca verify-full"`
+	MaxOpenConns    int           `mapstructure:"MAX_OPEN_CONNS" validate:"required,min=1"`
+	MaxIdleConns    int           `mapstructure:"MAX_IDLE_CONNS" validate:"required,min=1"`
+	ConnMaxLifetime time.Duration `mapstructure:"CONN_MAX_LIFETIME" validate:"required"`
+	ConnMaxIdleTime time.Duration `mapstructure:"CONN_MAX_IDLE_TIME" validate:"required"`
 }
 
 type RedisConfig struct {
@@ -57,9 +57,10 @@ type MilvusConfig struct {
 }
 
 type JWTConfig struct {
-	SigningKey          string        `mapstructure:"SIGNING_KEY" validate:"required"`
-	Issuer              string        `mapstructure:"ISSUER" validate:"required"`
-	AccessTokenTTL      time.Duration `mapstructure:"ACCESS_TOKEN_TTL" validate:"required"`
-	RefreshTokenTTL     time.Duration `mapstructure:"REFRESH_TOKEN_TTL" validate:"required"`
-	MfaTokenTTL         time.Duration `mapstructure:"MFA_TOKEN_TTL" validate:"required"`
+	SigningKey      string        `mapstructure:"SIGNING_KEY" validate:"required"`
+	Issuer          string        `mapstructure:"ISSUER" validate:"required"`
+	KeyID           string        `mapstructure:"KEY_ID" validate:"required"`
+	AccessTokenTTL  time.Duration `mapstructure:"ACCESS_TOKEN_TTL" validate:"required"`
+	RefreshTokenTTL time.Duration `mapstructure:"REFRESH_TOKEN_TTL" validate:"required"`
+	MfaTokenTTL     time.Duration `mapstructure:"MFA_TOKEN_TTL" validate:"required"`
 }
