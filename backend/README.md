@@ -4,7 +4,7 @@ This directory contains Go services implemented using clean architecture princip
 
 Planned services:
 - API Gateway
-- Authentication Service
+- Authentication Service ✅
 - Workspace Service
 - Document Service
 - Search Service
